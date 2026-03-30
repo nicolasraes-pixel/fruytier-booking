@@ -556,15 +556,9 @@
                             <label>T&eacute;l&eacute;phone</label>
                             <input type="tel" id="telephone" placeholder="+33 6 12 34 56 78">
                         </div>
-                        <div class="form-group">
-                            <label>Type de demande <span class="required">*</span></label>
-                            <select id="demande" required>
-                                <option value="">-- Choisir --</option>
-                                <option value="Achat bois">Achat bois</option>
-                                <option value="Partenariat">Partenariat</option>
-                                <option value="Info produits">Info produits</option>
-                                <option value="Autre">Autre</option>
-                            </select>
+                        <div class="form-group full-width">
+                            <label>Commentaire</label>
+                            <textarea id="demande" rows="3" placeholder="Dites-nous en quoi nous pouvons vous aider..." style="padding: 12px 14px; border: 2px solid var(--border); border-radius: 10px; font-family: inherit; font-size: 0.95em; resize: vertical; transition: border-color 0.3s;"></textarea>
                         </div>
                     </div>
                     <button type="submit" class="submit-btn" id="submit-btn">
@@ -740,7 +734,7 @@
             const telephone = document.getElementById('telephone').value.trim();
             const demande = document.getElementById('demande').value;
 
-            if (!nom || !prenom || !societe || !email || !demande) {
+            if (!nom || !prenom || !societe || !email) {
                 alert('Veuillez remplir tous les champs obligatoires.');
                 return;
             }
