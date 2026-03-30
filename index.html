@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fruytier Group - Réservation RDV | Carrefour International du Bois 2026</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --green-dark: #2d5016;
+            --green-main: #3a7d1e;
+            --green-light: #e8f5e0;
+            --green-accent: #4CAF50;
+            --wood-brown: #8B6914;
+            --wood-light: #f5f0e6;
+            --text-dark: #2c2c2c;
+            --text-gray: #5c5c5c;
+            --white: #ffffff;
+            --red: #d32f2f;
+            --border: #ddd;
+        }
+
+        body {
+            font-family: 'Montserrat', Arial, sans-serif;
+            background: var(--wood-light);
+            color: var(--text-dark);
+            min-height: 100vh;
+        }
+
+        /* HEADER */
+        .header {
+            background: linear-gradient(135deg, var(--green-dark) 0%, var(--green-main) 100%);
+            color: var(--white);
+            padding: 30px 20px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" opacity="0.05"><text y="50" font-size="80">🌲</text></svg>') repeat;
+            background-size: 80px;
+            pointer-events: none;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .logo-area {
+            margin-bottom: 15px;
+        }
+
+        .logo-text {
+            font-size: 2.2em;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .logo-sub {
+            font-size: 0.9em;
+            font-weight: 400;
+            opacity: 0.9;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+        }
+
+        .event-badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            border: 1px solid rgba(255,255,255,0.4);
+            border-radius: 30px;
+            padding: 8px 24px;
+            margin-top: 15px;
+            font-size: 0.85em;
+            backdrop-filter: blur(5px);
+        }
+
+        .stand-info {
+            margin-top: 12px;
+            font-size: 1.1em;
+            font-weight: 600;
+        }
+
+        .stand-badge {
+            display: inline-block;
+            background: var(--white);
+            color: var(--green-dark);
+            padding: 4px 16px;
+            border-radius: 20px;
+            font-weight: 700;
+            margin-left: 5px;
+        }
+
+        /* MAIN */
+        .main {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 30px 20px;
+        }
+
+        .section-title {
+            font-size: 1.3em;
+            font-weight: 700;
+            color: var(--green-dark);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        /* TABS JOURS */
+        .day-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .day-tab {
+            flex: 1;
+            min-width: 140px;
+            padding: 14px 10px;
+            border: 2px solid var(--green-main);
+            background: var(--white);
+            color: var(--green-main);
+            border-radius: 12px;
+            cursor: pointer;
+            text-align: center;
+            font-family: inherit;
+            font-weight: 600;
+            font-size: 0.85em;
+            transition: all 0.3s;
+        }
+
+        .day-tab:hover {
+            background: var(--green-light);
+        }
+
+        .day-tab.active {
+            background: var(--green-main);
+            color: var(--white);
+        }
+
+        .day-tab .day-name {
+            display: block;
+            font-size: 1.1em;
+            margin-bottom: 2px;
+        }
+
+        .day-tab .day-date {
+            display: block;
+            font-size: 0.85em;
+            opacity: 0.8;
+        }
+
+        /* SLOTS */
+        .slots-container {
+            display: none;
+        }
+
+        .slots-container.active {
+            display: block;
+        }
+
+        .slots-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 12px;
+            margin-bottom: 30px;
+        }
+
+        .slot-card {
+            background: var(--white);
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .slot-card:hover:not(.booked):not(.selected) {
+            border-color: var(--green-main);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(58, 125, 30, 0.15);
+        }
+
+        .slot-card.selected {
+            border-color: var(--green-main);
+            background: var(--green-light);
+            box-shadow: 0 4px 12px rgba(58, 125, 30, 0.2);
+        }
+
+        .slot-card.booked {
+            background: #f5f5f5;
+            border-color: #e0e0e0;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        .slot-time {
+            font-size: 1.15em;
+            font-weight: 700;
+            color: var(--green-dark);
+        }
+
+        .slot-card.booked .slot-time {
+            color: #999;
+        }
+
+        .slot-status {
+            font-size: 0.8em;
+            margin-top: 6px;
+            font-weight: 600;
+        }
+
+        .slot-status.available {
+            color: var(--green-accent);
+        }
+
+        .slot-status.taken {
+            color: var(--red);
+        }
+
+        .slot-status.selected-label {
+            color: var(--green-dark);
+        }
+
+        /* FORMULAIRE */
+        .form-section {
+            display: none;
+            background: var(--white);
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 2px 16px rgba(0,0,0,0.06);
+            margin-top: 10px;
+        }
+
+        .form-section.visible {
+            display: block;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .selected-slot-summary {
+            background: var(--green-light);
+            border-radius: 10px;
+            padding: 14px 20px;
+            margin-bottom: 25px;
+            text-align: center;
+            font-weight: 600;
+            color: var(--green-dark);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .form-group label {
+            font-size: 0.85em;
+            font-weight: 600;
+            color: var(--text-gray);
+            margin-bottom: 6px;
+        }
+
+        .form-group label .required {
+            color: var(--red);
+        }
+
+        .form-group input,
+        .form-group select {
+            padding: 12px 14px;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            font-family: inherit;
+            font-size: 0.95em;
+            transition: border-color 0.3s;
+            background: var(--white);
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--green-main);
+        }
+
+        .form-group input.error,
+        .form-group select.error {
+            border-color: var(--red);
+        }
+
+        .submit-btn {
+            display: block;
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, var(--green-dark), var(--green-main));
+            color: var(--white);
+            border: none;
+            border-radius: 12px;
+            font-family: inherit;
+            font-size: 1.1em;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(58, 125, 30, 0.3);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* CONFIRMATION */
+        .confirmation {
+            display: none;
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .confirmation.visible {
+            display: block;
+            animation: slideIn 0.4s ease;
+        }
+
+        .confirmation-icon {
+            font-size: 4em;
+            margin-bottom: 15px;
+        }
+
+        .confirmation h2 {
+            color: var(--green-dark);
+            margin-bottom: 10px;
+        }
+
+        .confirmation p {
+            color: var(--text-gray);
+            margin-bottom: 8px;
+        }
+
+        .confirmation-details {
+            background: var(--green-light);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px auto;
+            max-width: 400px;
+            text-align: left;
+        }
+
+        .confirmation-details p {
+            margin: 8px 0;
+            color: var(--text-dark);
+        }
+
+        .confirmation-details strong {
+            color: var(--green-dark);
+        }
+
+        .new-booking-btn {
+            display: inline-block;
+            padding: 12px 30px;
+            background: var(--white);
+            color: var(--green-main);
+            border: 2px solid var(--green-main);
+            border-radius: 10px;
+            font-family: inherit;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.3s;
+        }
+
+        .new-booking-btn:hover {
+            background: var(--green-light);
+        }
+
+        /* FOOTER */
+        .footer {
+            text-align: center;
+            padding: 25px 20px;
+            color: var(--text-gray);
+            font-size: 0.8em;
+        }
+
+        .footer a {
+            color: var(--green-main);
+            text-decoration: none;
+        }
+
+        /* LOADING */
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(255,255,255,0.85);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .loading-overlay.visible {
+            display: flex;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid var(--border);
+            border-top-color: var(--green-main);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            margin-top: 15px;
+            font-weight: 600;
+            color: var(--green-dark);
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 600px) {
+            .logo-text { font-size: 1.6em; }
+            .form-grid { grid-template-columns: 1fr; }
+            .day-tab { min-width: 100px; padding: 10px 8px; }
+            .slots-grid { grid-template-columns: 1fr 1fr; }
+            .header { padding: 20px 15px; }
+            .main { padding: 20px 15px; }
+            .form-section { padding: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- HEADER -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo-area">
+                <div class="logo-text">Fruytier Group</div>
+                <div class="logo-sub">Better and Faster everyday</div>
+            </div>
+            <div class="event-badge">
+                Carrefour International du Bois 2026 &mdash; Nantes
+            </div>
+            <div class="stand-info">
+                Retrouvez-nous au stand <span class="stand-badge">XXL-D13</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN -->
+    <main class="main">
+        <div id="booking-section">
+            <h2 class="section-title">Prenez rendez-vous sur notre stand</h2>
+
+            <!-- TABS -->
+            <div class="day-tabs">
+                <button class="day-tab active" data-day="tuesday" onclick="switchDay('tuesday')">
+                    <span class="day-name">Mardi</span>
+                    <span class="day-date">2 juin 2026</span>
+                </button>
+                <button class="day-tab" data-day="wednesday" onclick="switchDay('wednesday')">
+                    <span class="day-name">Mercredi</span>
+                    <span class="day-date">3 juin 2026</span>
+                </button>
+                <button class="day-tab" data-day="thursday" onclick="switchDay('thursday')">
+                    <span class="day-name">Jeudi</span>
+                    <span class="day-date">4 juin 2026</span>
+                </button>
+            </div>
+
+            <!-- SLOTS -->
+            <div id="slots-tuesday" class="slots-container active">
+                <div class="slots-grid" id="grid-tuesday"></div>
+            </div>
+            <div id="slots-wednesday" class="slots-container">
+                <div class="slots-grid" id="grid-wednesday"></div>
+            </div>
+            <div id="slots-thursday" class="slots-container">
+                <div class="slots-grid" id="grid-thursday"></div>
+            </div>
+
+            <!-- FORMULAIRE -->
+            <div class="form-section" id="form-section">
+                <div class="selected-slot-summary" id="selected-summary"></div>
+                <form id="booking-form" onsubmit="submitBooking(event)">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Nom <span class="required">*</span></label>
+                            <input type="text" id="nom" required placeholder="Dupont">
+                        </div>
+                        <div class="form-group">
+                            <label>Pr&eacute;nom <span class="required">*</span></label>
+                            <input type="text" id="prenom" required placeholder="Marie">
+                        </div>
+                        <div class="form-group">
+                            <label>Soci&eacute;t&eacute; <span class="required">*</span></label>
+                            <input type="text" id="societe" required placeholder="Nom de votre entreprise">
+                        </div>
+                        <div class="form-group">
+                            <label>Email <span class="required">*</span></label>
+                            <input type="email" id="email" required placeholder="marie@entreprise.com">
+                        </div>
+                        <div class="form-group">
+                            <label>T&eacute;l&eacute;phone</label>
+                            <input type="tel" id="telephone" placeholder="+33 6 12 34 56 78">
+                        </div>
+                        <div class="form-group">
+                            <label>Type de demande <span class="required">*</span></label>
+                            <select id="demande" required>
+                                <option value="">-- Choisir --</option>
+                                <option value="Achat bois">Achat bois</option>
+                                <option value="Partenariat">Partenariat</option>
+                                <option value="Info produits">Info produits</option>
+                                <option value="Autre">Autre</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button type="submit" class="submit-btn" id="submit-btn">
+                        Confirmer mon rendez-vous
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- CONFIRMATION -->
+        <div class="confirmation" id="confirmation">
+            <div class="confirmation-icon">&#10003;</div>
+            <h2>Rendez-vous confirm&eacute; !</h2>
+            <p>Un email de confirmation vous a &eacute;t&eacute; envoy&eacute;.</p>
+            <div class="confirmation-details" id="confirmation-details"></div>
+            <p style="font-size:0.85em; margin-top: 15px;">
+                Retrouvez-nous au stand <strong>XXL-D13</strong>
+            </p>
+            <button class="new-booking-btn" onclick="resetBooking()">
+                R&eacute;server un autre cr&eacute;neau
+            </button>
+        </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <p>&copy; 2026 Fruytier Group &mdash; <a href="http://www.fruytier.com" target="_blank">www.fruytier.com</a></p>
+        <p style="margin-top: 5px;">Carrefour International du Bois &mdash; Nantes, 2&ndash;4 juin 2026</p>
+    </footer>
+
+    <!-- LOADING -->
+    <div class="loading-overlay" id="loading">
+        <div class="spinner"></div>
+        <div class="loading-text">R&eacute;servation en cours...</div>
+    </div>
+
+    <!-- FIREBASE -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-app.js";
+        import { getDatabase, ref, set, get, onValue } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-database.js";
+
+        // ============================================
+        // CONFIGURATION FIREBASE
+        // Remplacer par vos propres valeurs Firebase
+        // ============================================
+        const firebaseConfig = {
+            apiKey: "VOTRE_API_KEY",
+            authDomain: "VOTRE_PROJET.firebaseapp.com",
+            databaseURL: "https://VOTRE_PROJET-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "VOTRE_PROJET",
+            storageBucket: "VOTRE_PROJET.appspot.com",
+            messagingSenderId: "VOTRE_SENDER_ID",
+            appId: "VOTRE_APP_ID"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        // ============================================
+        // DONNEES DES CRENEAUX
+        // ============================================
+        const SLOTS = {
+            tuesday: {
+                label: "Mardi 2 juin 2026",
+                slots: [
+                    { id: "mar-1", time: "09:00 - 09:45" },
+                    { id: "mar-2", time: "10:30 - 11:15" },
+                    { id: "mar-3", time: "12:00 - 12:45" },
+                    { id: "mar-4", time: "13:30 - 14:15" },
+                    { id: "mar-5", time: "15:00 - 15:45" }
+                ]
+            },
+            wednesday: {
+                label: "Mercredi 3 juin 2026",
+                slots: [
+                    { id: "mer-1", time: "09:00 - 09:45" },
+                    { id: "mer-2", time: "10:30 - 11:15" },
+                    { id: "mer-3", time: "12:00 - 12:45" },
+                    { id: "mer-4", time: "13:30 - 14:15" },
+                    { id: "mer-5", time: "15:00 - 15:45" },
+                    { id: "mer-6", time: "16:30 - 17:15" },
+                    { id: "mer-7", time: "18:00 - 18:45" }
+                ]
+            },
+            thursday: {
+                label: "Jeudi 4 juin 2026",
+                slots: [
+                    { id: "jeu-1", time: "09:00 - 09:45" },
+                    { id: "jeu-2", time: "10:30 - 11:15" },
+                    { id: "jeu-3", time: "12:00 - 12:45" },
+                    { id: "jeu-4", time: "13:30 - 14:15" },
+                    { id: "jeu-5", time: "15:00 - 15:45" }
+                ]
+            }
+        };
+
+        let bookedSlots = {};
+        let selectedSlot = null;
+        let selectedDay = null;
+
+        // ============================================
+        // ECOUTE EN TEMPS REEL DES RESERVATIONS
+        // ============================================
+        const bookingsRef = ref(db, 'bookings');
+        onValue(bookingsRef, (snapshot) => {
+            bookedSlots = {};
+            if (snapshot.exists()) {
+                const data = snapshot.val();
+                Object.values(data).forEach(booking => {
+                    bookedSlots[booking.slotId] = true;
+                });
+            }
+            renderAllSlots();
+        });
+
+        // ============================================
+        // RENDU DES CRENEAUX
+        // ============================================
+        function renderAllSlots() {
+            Object.keys(SLOTS).forEach(day => {
+                const grid = document.getElementById(`grid-${day}`);
+                grid.innerHTML = '';
+                SLOTS[day].slots.forEach(slot => {
+                    const isBooked = bookedSlots[slot.id] === true;
+                    const isSelected = selectedSlot === slot.id;
+                    const card = document.createElement('div');
+                    card.className = `slot-card${isBooked ? ' booked' : ''}${isSelected ? ' selected' : ''}`;
+                    card.innerHTML = `
+                        <div class="slot-time">${slot.time}</div>
+                        <div class="slot-status ${isBooked ? 'taken' : isSelected ? 'selected-label' : 'available'}">
+                            ${isBooked ? 'Reserv\u00e9' : isSelected ? 'S\u00e9lectionn\u00e9' : 'Disponible'}
+                        </div>
+                    `;
+                    if (!isBooked) {
+                        card.onclick = () => selectSlot(slot.id, slot.time, day);
+                    }
+                    grid.appendChild(card);
+                });
+            });
+        }
+
+        // ============================================
+        // SELECTION D'UN CRENEAU
+        // ============================================
+        window.selectSlot = function(slotId, time, day) {
+            selectedSlot = slotId;
+            selectedDay = day;
+            renderAllSlots();
+
+            const formSection = document.getElementById('form-section');
+            const summary = document.getElementById('selected-summary');
+            summary.textContent = `${SLOTS[day].label} \u2014 ${time}`;
+            formSection.classList.add('visible');
+            formSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        };
+
+        // ============================================
+        // SOUMISSION DU FORMULAIRE
+        // ============================================
+        window.submitBooking = async function(e) {
+            e.preventDefault();
+
+            if (!selectedSlot || !selectedDay) {
+                alert('Veuillez s\u00e9lectionner un cr\u00e9neau.');
+                return;
+            }
+
+            // Validation
+            const nom = document.getElementById('nom').value.trim();
+            const prenom = document.getElementById('prenom').value.trim();
+            const societe = document.getElementById('societe').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const telephone = document.getElementById('telephone').value.trim();
+            const demande = document.getElementById('demande').value;
+
+            if (!nom || !prenom || !societe || !email || !demande) {
+                alert('Veuillez remplir tous les champs obligatoires.');
+                return;
+            }
+
+            const submitBtn = document.getElementById('submit-btn');
+            const loading = document.getElementById('loading');
+            submitBtn.disabled = true;
+            loading.classList.add('visible');
+
+            try {
+                // Verifier que le slot est encore dispo
+                const slotRef = ref(db, `bookings/${selectedSlot}`);
+                const snapshot = await get(slotRef);
+
+                if (snapshot.exists()) {
+                    alert('D\u00e9sol\u00e9, ce cr\u00e9neau vient d\u2019\u00eatre r\u00e9serv\u00e9. Veuillez en choisir un autre.');
+                    loading.classList.remove('visible');
+                    submitBtn.disabled = false;
+                    selectedSlot = null;
+                    selectedDay = null;
+                    document.getElementById('form-section').classList.remove('visible');
+                    renderAllSlots();
+                    return;
+                }
+
+                const slot = SLOTS[selectedDay].slots.find(s => s.id === selectedSlot);
+                const bookingData = {
+                    slotId: selectedSlot,
+                    day: SLOTS[selectedDay].label,
+                    time: slot.time,
+                    nom,
+                    prenom,
+                    societe,
+                    email,
+                    telephone,
+                    demande,
+                    createdAt: new Date().toISOString()
+                };
+
+                // Sauvegarder
+                await set(slotRef, bookingData);
+
+                // Afficher confirmation
+                loading.classList.remove('visible');
+                document.getElementById('booking-section').style.display = 'none';
+                const confirmation = document.getElementById('confirmation');
+                const details = document.getElementById('confirmation-details');
+                details.innerHTML = `
+                    <p><strong>Date :</strong> ${bookingData.day}</p>
+                    <p><strong>Horaire :</strong> ${bookingData.time}</p>
+                    <p><strong>Nom :</strong> ${prenom} ${nom}</p>
+                    <p><strong>Soci\u00e9t\u00e9 :</strong> ${societe}</p>
+                    <p><strong>Email :</strong> ${email}</p>
+                    <p><strong>Demande :</strong> ${demande}</p>
+                `;
+                confirmation.classList.add('visible');
+
+            } catch (error) {
+                console.error('Erreur:', error);
+                alert('Une erreur est survenue. Veuillez r\u00e9essayer.');
+                loading.classList.remove('visible');
+                submitBtn.disabled = false;
+            }
+        };
+
+        // ============================================
+        // RESET
+        // ============================================
+        window.resetBooking = function() {
+            selectedSlot = null;
+            selectedDay = null;
+            document.getElementById('booking-form').reset();
+            document.getElementById('form-section').classList.remove('visible');
+            document.getElementById('confirmation').classList.remove('visible');
+            document.getElementById('booking-section').style.display = 'block';
+            document.getElementById('submit-btn').disabled = false;
+            switchDay('tuesday');
+            renderAllSlots();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        };
+
+        // ============================================
+        // NAVIGATION JOURS
+        // ============================================
+        window.switchDay = function(day) {
+            document.querySelectorAll('.day-tab').forEach(tab => {
+                tab.classList.toggle('active', tab.dataset.day === day);
+            });
+            document.querySelectorAll('.slots-container').forEach(container => {
+                container.classList.remove('active');
+            });
+            document.getElementById(`slots-${day}`).classList.add('active');
+        };
+
+        // Rendu initial
+        renderAllSlots();
+    </script>
+
+</body>
+</html>
