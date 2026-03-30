@@ -31,7 +31,7 @@ exports.onNewBooking = functions
         // Email vers Florine
         const mailToFlorine = {
             from: `"Fruytier Booking" <${functions.config().email.user}>`,
-            to: "florinedubois@outlook.be",
+            to: "marketing@fruytiergroup.com",
             subject: `Nouveau RDV - ${booking.day} ${booking.time} - ${booking.societe}`,
             html: `
                 <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
